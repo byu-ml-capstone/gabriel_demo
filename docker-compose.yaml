@@ -32,14 +32,14 @@ services:
       - APP_URL=${SERVICE_FQDN_HELLO}
       # Postgres connection string. Uses the compose service DNS name `db`
       # as the hostname (see the `db:` service below).
-      - DATABASE_URL=postgresql://appuser:apppass@db:5432/appdb
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-appuser}:${POSTGRES_PASSWORD:-apppass}@db:5432/${POSTGRES_DB:-appdb}
     depends_on:
       time:
         condition: service_healthy
       db:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health').read()"]
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/ready').read()"]
       # Probe often while starting, rarely once healthy. `start_interval`
       # applies during `start_period`, so a fresh container is detected healthy
       # within a few seconds; after that the steady-state `interval` takes over.
@@ -93,13 +93,13 @@ services:
   db:
     image: postgres:16-alpine
     environment:
-      - POSTGRES_USER=appuser
-      - POSTGRES_PASSWORD=apppass
-      - POSTGRES_DB=appdb
+      - POSTGRES_USER=${POSTGRES_USER:-appuser}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-apppass}
+      - POSTGRES_DB=${POSTGRES_DB:-appdb}
     volumes:
       - db-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U appuser -d appdb"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-appuser} -d ${POSTGRES_DB:-appdb}"]
       # This was the noisiest of the three: pg_isready every 5 seconds, forever.
       # Postgres still has to be confirmed ready quickly, because `hello` blocks
       # on it via depends_on — start_interval does that without the steady-state

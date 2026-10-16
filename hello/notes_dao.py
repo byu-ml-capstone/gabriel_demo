@@ -102,7 +102,20 @@ class NotesDAO:
         for dev use; in production this is behind ALLOW_ADMIN_RESET.
         """
         with psycopg.connect(self.database_url) as conn, conn.cursor() as cur:
-            cur.execute("DROP TABLE IF EXISTS notes")
+            # Reverse dependency order keeps the reset explicit and avoids
+            # CASCADE accidentally reaching tables owned by another service.
+            for table in (
+                "task_creation_requests",
+                "task_history_events",
+                "tasks",
+                "workflow_transitions",
+                "workflow_sections",
+                "project_memberships",
+                "projects",
+                "users",
+                "notes",
+            ):
+                cur.execute(f'DROP TABLE IF EXISTS "{table}"')
             cur.execute("DROP TABLE IF EXISTS _migrations")
         # Re-apply so the caller gets a working (empty) schema back.
         self.apply_migrations()

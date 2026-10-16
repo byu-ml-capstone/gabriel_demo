@@ -15,20 +15,26 @@ client = TestClient(app)
 # ---------------------------------------------------------------------------
 
 
-def test_hello_default():
+def test_root_serves_kanban_ui():
     r = client.get("/")
+    assert r.status_code == 200
+    assert "Kanban Lite" in r.text
+
+
+def test_hello_default():
+    r = client.get("/demo/hello")
     assert r.status_code == 200
     assert r.json() == {"hello": "Hello, world"}
 
 
 def test_hello_spanish():
-    r = client.get("/", params={"lang": "es"})
+    r = client.get("/demo/hello", params={"lang": "es"})
     assert r.status_code == 200
     assert r.json() == {"hello": "Hola, mundo"}
 
 
 def test_hello_unknown_lang_falls_back_to_default():
-    r = client.get("/", params={"lang": "xx"})
+    r = client.get("/demo/hello", params={"lang": "xx"})
     assert r.status_code == 200
     assert r.json() == {"hello": "Hello, world"}
 

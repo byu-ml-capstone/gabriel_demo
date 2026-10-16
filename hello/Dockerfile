@@ -12,6 +12,7 @@ COPY *.py ./
 # Schema migration SQL files. Applied by notes_dao.apply_migrations() on
 # app startup — see the lifespan hook in main.py.
 COPY migrations/ ./migrations/
+COPY static/ ./static/
 
 EXPOSE 8000
 
