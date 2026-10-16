@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kanban Lite</title>
+  <link rel="stylesheet" href="/static/styles.css?v=2">
+</head>
+<body>
+  <header>
+    <div>
+      <h1>Kanban Lite</h1>
+      <p>One shared board for the work that matters.</p>
+    </div>
+    <button id="change-user" class="quiet" hidden>Change user</button>
+  </header>
+
+  <main>
+    <p id="message" role="status" aria-live="polite"></p>
+
+    <section id="identity-view" class="panel">
+      <h2>Start locally</h2>
+      <p>Create a temporary local identity. Authentication will be added later.</p>
+      <form id="identity-form">
+        <label>Name <input name="display_name" required maxlength="120" autocomplete="name"></label>
+        <label>Email <input name="email" type="email" maxlength="320" autocomplete="email"></label>
+        <button>Create identity</button>
+      </form>
+    </section>
+
+    <section id="workspace" hidden>
+      <nav class="toolbar">
+        <label>Project <select id="project-select"></select></label>
+        <button id="new-project" class="quiet">New project</button>
+        <button id="refresh" class="quiet">Refresh</button>
+        <button id="new-task">Add task</button>
+      </nav>
+
+      <form id="project-form" class="panel compact" hidden>
+        <h2>New project</h2>
+        <label>Name <input name="name" required maxlength="160"></label>
+        <label>Description <textarea name="description" rows="2" maxlength="2000"></textarea></label>
+        <div class="actions"><button>Create project</button><button type="button" class="quiet cancel">Cancel</button></div>
+      </form>
+
+      <form id="task-form" class="panel compact" hidden>
+        <h2>New task</h2>
+        <label>Title <input name="title" required maxlength="240"></label>
+        <label>Description <textarea name="description" rows="2" maxlength="10000"></textarea></label>
+        <label>Priority
+          <select name="priority"><option value="">None</option><option>low</option><option>medium</option><option>high</option></select>
+        </label>
+        <div class="actions"><button>Add task</button><button type="button" class="quiet cancel">Cancel</button></div>
+      </form>
+
+      <div id="empty" class="panel" hidden>
+        <h2>No projects yet</h2>
+        <p>Create a project to provision its shared workflow.</p>
+      </div>
+      <div id="board" aria-label="Kanban board"></div>
+    </section>
+  </main>
+  <script src="/static/app.js?v=2" defer></script>
+</body>
+</html>

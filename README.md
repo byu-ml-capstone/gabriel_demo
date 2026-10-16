@@ -1,4 +1,46 @@
-# hello-world-app
+# Kanban Lite MVP
+
+Kanban Lite is a minimal shared board for small capstone teams. The current
+implementation is the first vertical slice from `Product-Specification.md`:
+
+- create a provisional local user identity;
+- create a project and its default Backlog → In Progress → Review → Done workflow;
+- create an idempotent task in the initial section;
+- drag a task to its next section, or use its accessible move button;
+- reject invalid or stale moves without silently overwriting newer work;
+- retrieve the same saved board from another client using the same user ID;
+- distinguish process liveness (`/health`) from database readiness (`/ready`).
+
+The course specification requires FastAPI for the HTTP contract, so the API is
+Python. Rust remains a good fit for a future import/export CLI, background
+worker, or other service where it would not conflict with that contract.
+
+## Run the MVP locally
+
+Prerequisite: Docker Desktop with its Linux engine running.
+
+```powershell
+Copy-Item .env.example .env
+docker compose up --build
+```
+
+Open <http://localhost:8000>. The first screen creates a development-only local
+identity, followed by a project and task. Data is stored in the named
+`db-data` PostgreSQL volume and survives ordinary container restarts.
+
+The local identity is deliberately provisional: the browser sends its saved ID
+in `X-User-ID`. It is not production authentication and must be replaced before
+hosting real user data.
+
+## Run unit tests
+
+```powershell
+py -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r hello\requirements.txt pytest httpx
+.\.venv\Scripts\python.exe -m pytest hello\tests -q
+```
+
+## Legacy deployment scaffold
 
 Minimal FastAPI starter for the ML Capstone class deployment lab. Use this to walk through the Coolify setup + push-to-deploy pipeline without getting entangled in ML plumbing.
 
